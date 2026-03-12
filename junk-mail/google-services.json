@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "906231894382",
+    "project_id": "junk-mail-comps",
+    "storage_bucket": "junk-mail-comps.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:906231894382:android:3f5b2c7d2a401653cdb17f",
+        "android_client_info": {
+          "package_name": "com.junkmail.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "ADD YOUR API KEY HERE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

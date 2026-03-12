@@ -1,0 +1,53 @@
+{
+  "expo": {
+    "name": "junk-mail",
+    "slug": "junk-mail",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/junkmaillogobackground.png",
+    "scheme": "junkmail",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "extra": {
+      "eas": {
+        "projectId": "12d910cd-8d5c-4b69-b54a-6a0cba32f8ae"
+      }
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/images/junkmaillogobackground.png",
+        "backgroundImage": "./assets/images/junkmaillogobackground.png",
+        "monochromeImage": "./assets/images/junkmaillogobackground.png"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "output": "static",
+      "favicon": "./assets/images/junkmaillogobackground.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/junkmaillogobackground.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff",
+          "dark": {
+            "backgroundColor": "#000000"
+          }
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}
