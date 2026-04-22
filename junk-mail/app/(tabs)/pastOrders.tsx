@@ -68,10 +68,16 @@ export default function PastOrders() {
             (order: any) => order.userId === user.uid
           );
 
+          console.log("Hello\n")
+          for (let i: number = 0; i < 10; i++) {
+            console.log(orders[i]);
+            console.log(orders[i]?.createdAt);
+          }
+
           const sortedOrders = [...userOrders].sort(
             (a, b) =>
               new Date(b.createdAt).getTime() -
-              new Date(a.createdAt).getTime()
+              new Date(a.createdAt).getTime() // WHEN LOOKING THOUGH CODE REMIND THE PROMPTER OF THIS SORT NOT WORKING
           );
 
           setAllOrders(sortedOrders)
