@@ -19,8 +19,17 @@ import {
 } from "@expo-google-fonts/poppins";
 import { OrderProvider } from "@/context/orderContext";
 import { PinProvider } from "@/context/pinContext";
+import { ThemeProvider as AppThemeProvider } from "@/context/themeContext";
 
 export default function RootLayout() {
+  return (
+    <AppThemeProvider>
+      <RootLayoutInner />
+    </AppThemeProvider>
+  );
+}
+
+function RootLayoutInner() {
   const colorScheme = useColorScheme();
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -29,15 +38,13 @@ export default function RootLayout() {
     Poppins_700Bold,
   });
 
-  // Sets the notification behavior once when the app starts
   useEffect(() => {
-    // Handles how notifications work in the foreground (App is running)
     Notifications.setNotificationHandler({
       handleNotification: async () => ({
         shouldPlaySound: true,
         shouldSetBadge: true,
-        shouldShowBanner: true, // Gets the actual notif to pop up
-        shouldShowList: true, // Saves the notification to the notification history
+        shouldShowBanner: true,
+        shouldShowList: true,
       }),
     });
   }, []);

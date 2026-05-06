@@ -1,9 +1,9 @@
-import { Pressable, StyleSheet, AccessibilityProps } from "react-native";
+import { Pressable, StyleSheet, AccessibilityProps, StyleProp, ViewStyle } from "react-native";
 import { ThemedView } from "@/components/themed-view";
 import { ThemedText } from "@/components/themed-text";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { Colors, Fonts } from '@/constants/theme';
-import { useColorScheme, StyleProp, ViewStyle } from 'react-native';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import { ComponentProps } from 'react';
 
 interface PrimaryButtonProps extends AccessibilityProps {

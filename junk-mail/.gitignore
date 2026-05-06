@@ -5,4 +5,5 @@
 expo-env.d.ts
 utils/firebaseConfig.ts
 node_modules/
+.idea/
 # @end expo-cli

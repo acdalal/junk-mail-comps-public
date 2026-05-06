@@ -8,7 +8,6 @@ import {
   StyleSheet,
   Switch,
   Text,
-  useColorScheme,
   View,
 } from "react-native";
 
@@ -19,6 +18,7 @@ import { IconSymbol } from "@/components/ui/icon-symbol";
 import { Title } from "@/components/ui/title";
 import { Colors, Fonts } from "@/constants/theme";
 import { usePin } from "@/context/pinContext";
+import { useTheme } from "@/context/themeContext";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
@@ -37,7 +37,7 @@ import { registerPushNotifications } from "../utils/pushNotifications";
 frequency can be enabled/disabled and modified.*/
 
 export default function TabTwoScreen() {
-  const colorScheme = useColorScheme() ?? "light";
+  const { colorScheme, toggleTheme } = useTheme();
   const colors = Colors[colorScheme];
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
@@ -224,13 +224,13 @@ export default function TabTwoScreen() {
     //checkbox
     if (type === "checkbox") {
       return (
-        <Pressable style={[faqStyles.faqItem, { width: "98%" }]}>
+        <Pressable style={[faqStyles.faqItem, { width: "98%", backgroundColor: colors.surface }]}>
           <View style={faqStyles.questionContainer}>
             <View style={{ flex: 1 }}>
-              <Text style={faqStyles.questionText}>{title}</Text>
+              <Text style={[faqStyles.questionText, { color: colors.text }]}>{title}</Text>
               {description && (
                 <Text
-                  style={{ color: "#6e6e73", marginTop: 4, marginRight: 4 }}
+                  style={{ color: colors.text, opacity: 0.6, marginTop: 4, marginRight: 4 }}
                 >
                   {description}
                 </Text>
@@ -264,7 +264,7 @@ export default function TabTwoScreen() {
       <View
         style={[
           faqStyles.faqItem,
-          { width: "98%", zIndex: open ? 1000 : 1, overflow: "visible" },
+          { width: "98%", zIndex: open ? 1000 : 1, overflow: "visible", backgroundColor: colors.surface },
         ]}
       >
         <Pressable
@@ -281,9 +281,9 @@ export default function TabTwoScreen() {
           accessibilityState={{ expanded: open }}
         >
           <View style={{ flex: 1 }}>
-            <Text style={faqStyles.questionText}>{title}</Text>
+            <Text style={[faqStyles.questionText, { color: colors.text }]}>{title}</Text>
             {description && (
-              <Text style={{ color: "#6e6e73", marginTop: 4, marginRight: 4 }}>
+              <Text style={{ color: colors.text, opacity: 0.6, marginTop: 4, marginRight: 4 }}>
                 {description}
               </Text>
             )}
@@ -291,12 +291,12 @@ export default function TabTwoScreen() {
           <View
             style={{ minWidth: 75, alignItems: "flex-end", marginRight: 8 }}
           >
-            <Text style={styles.dropdownValue}>{value}</Text>
+            <Text style={[styles.dropdownValue, { color: colors.text }]}>{value}</Text>
           </View>
           <Ionicons
             name={open ? "chevron-up" : "chevron-down"}
             size={14}
-            color="#324D7F"
+            color={colors.primary}
           />
         </Pressable>
         {open && (
@@ -307,10 +307,10 @@ export default function TabTwoScreen() {
               top: "80%",
               width: 140,
               maxHeight: 160,
-              backgroundColor: "white",
+              backgroundColor: colors.surface,
               borderRadius: 8,
               borderWidth: 1,
-              borderColor: "#e5e5e5",
+              borderColor: colors.border,
               shadowColor: "#000",
               shadowOffset: { width: 0, height: 2 },
               shadowOpacity: 0.1,
@@ -320,7 +320,7 @@ export default function TabTwoScreen() {
             }}
           >
             <ScrollView nestedScrollEnabled={true}>
-              <View style={faqStyles.answerContainer}>
+              <View style={[faqStyles.answerContainer, { borderTopColor: colors.border }]}>
                 {options.map((option) => (
                   <Pressable
                     key={option}
@@ -343,11 +343,12 @@ export default function TabTwoScreen() {
                           {
                             fontWeight: "600",
                             fontFamily: Fonts.regular,
-                            color: "#1E325C",
+                            color: colors.text,
                           },
                         ],
                         option !== value && {
-                          color: "#6e6e73",
+                          color: colors.text,
+                          opacity: 0.5,
                           marginTop: 4,
                           marginRight: 4,
                         },
@@ -369,7 +370,7 @@ export default function TabTwoScreen() {
   const MakeSettingsTile = () => {
     return (
       <View
-        style={[styles.reviewTile, { padding: 16, backgroundColor: "#f2f2f7" }]}
+        style={[styles.reviewTile, { padding: 16, backgroundColor: colors.surface }]}
       >
         <ScrollView
           style={{ width: "100%", maxHeight: 800 }}
@@ -388,6 +389,13 @@ export default function TabTwoScreen() {
             description="Save your completed orders so you can view them later in Past Orders"
             checked={saveOrdersEnabled}
             onSelect={toggleOrderSaving}
+          />
+
+          <SettingsRow
+            title="Dark Mode"
+            description="Switch between light and dark appearance"
+            checked={colorScheme === "dark"}
+            onSelect={toggleTheme}
           />
 
           <SettingsRow
@@ -519,7 +527,7 @@ export default function TabTwoScreen() {
 
             <View style={styles.modalButtonRow}>
               <Pressable onPress={() => setPinModalVisible(false)}>
-                <Text style={styles.modalCancelText}>Cancel</Text>
+                <Text style={[styles.modalCancelText, { borderColor: colors.text, color: colors.text }]}>Cancel</Text>
               </Pressable>
               <Pressable
                 onPress={() => {
@@ -532,7 +540,7 @@ export default function TabTwoScreen() {
                   }
                 }}
               >
-                <Text style={styles.modalConfirmText}>OK</Text>
+                <Text style={[styles.modalConfirmText, { borderColor: colors.text, color: colors.text }]}>OK</Text>
               </Pressable>
             </View>
           </View>
@@ -549,7 +557,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     marginLeft: 20,
     marginRight: 20,
-    height: 560,
+    // height: 560,
     alignItems: "center",
     paddingVertical: 10,
     borderRadius: 12,

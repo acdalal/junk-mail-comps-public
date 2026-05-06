@@ -2,10 +2,10 @@ import {
   Pressable,
   ScrollView,
   Text,
-  useColorScheme,
   View,
   Linking,
 } from "react-native";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 import { Colors } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
@@ -109,9 +109,9 @@ export default function ProductInfoScreen() {
         accessible={false}
       >
         {faq.map((faq, index) => (
-          <View 
-            key={index} 
-            style={faqStyles.faqItem}
+          <View
+            key={index}
+            style={[faqStyles.faqItem, { backgroundColor: colors.surface }]}
             accessible={false}
           >
             <Pressable
@@ -141,28 +141,28 @@ export default function ProductInfoScreen() {
             </Pressable>
 
             {expandedIndex === index && (
-              <View 
-                style={faqStyles.answerContainer}
+              <View
+                style={[faqStyles.answerContainer, { borderTopColor: colors.border }]}
                 accessible={true}
                 accessibilityRole="text"
                 accessibilityLabel={`Answer: ${faq.A}${faq.bulletPoints ? '. Includes a list of items.' : ''}`}
               >
-                <Text style={faqStyles.answerText}>{faq.A}</Text>
+                <Text style={[faqStyles.answerText, { color: colors.text }]}>{faq.A}</Text>
                 {faq.bulletPoints && (
-                  <View 
+                  <View
                     style={faqStyles.bulletContainer}
                     accessible={false}
                   >
                     {faq.bulletPoints.map((bullet, bulletIndex) => (
-                      <View 
-                        key={bulletIndex} 
+                      <View
+                        key={bulletIndex}
                         style={faqStyles.bulletItem}
                         accessible={true}
                         accessibilityRole="text"
                         accessibilityLabel={`Item ${bulletIndex + 1}: ${bullet}`}
                       >
-                        <Text style={faqStyles.bullet} accessible={false}>•</Text>
-                        <Text style={faqStyles.bulletText} accessible={false}>{bullet}</Text>
+                        <Text style={[faqStyles.bullet, { color: colors.primary }]} accessible={false}>•</Text>
+                        <Text style={[faqStyles.bulletText, { color: colors.text }]} accessible={false}>{bullet}</Text>
                       </View>
                     ))}
                   </View>

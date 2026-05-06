@@ -1,7 +1,8 @@
 import { useState, useCallback } from "react";
 import {
-  ScrollView, StyleSheet, Text, useColorScheme, View, LayoutAnimation, Pressable,
+  ScrollView, StyleSheet, Text, View, LayoutAnimation, Pressable,
 } from "react-native";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 import { getCurrentUser } from "@/app/utils/accountStorage";
 import { loadOrders } from "@/app/utils/orderStorage";
@@ -68,7 +69,6 @@ export default function PastOrders() {
             (order: any) => order.userId === user.uid
           );
 
-          console.log("Hello\n")
           for (let i: number = 0; i < 10; i++) {
             console.log(orders[i]);
             console.log(orders[i]?.createdAt);
@@ -183,7 +183,7 @@ export default function PastOrders() {
       >Past Orders</Title>
 
       {groupedOrders.length === 0 ? (
-        <View style={styles.placeholderContainer}>
+        <View style={[styles.placeholderContainer, { backgroundColor: colors.container }]}>
           {saveOrdersEnabled === false &&
           mostRecentCompletedOrder ? (
             <Text style={styles.placeholderText}>
@@ -218,10 +218,10 @@ export default function PastOrders() {
               return (
               <View key={order.id}>
                 <View style={styles.shadowWrapper}>
-                  <View style={styles.sectionContainer}>
+                  <View style={[styles.sectionContainer, { backgroundColor: colors.surface }]}>
                     <Pressable
                       onPress={() => toggle(order.id)}
-                      style={styles.orderBox}
+                      style={[styles.orderBox, { backgroundColor: colors.surface }]}
                     >
                       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <IconSymbol name="chevron.right" size={14} color={colors.text} style={{ marginRight: 20, transform: [{ rotate: expanded === order.id ? '90deg' : '0deg' }] }} />
@@ -245,8 +245,7 @@ export default function PastOrders() {
 
                     {expanded === order.id && (
                       <View
-                        style={styles.orderDetails}
-                      >
+                        style={[styles.orderDetails, { backgroundColor: colors.container }]}>
                         {(Object.entries(order.items) as [string, OrderItem][]).map(([key, value]) => (
                           <View
                             key={key}
@@ -283,6 +282,7 @@ export default function PastOrders() {
                                   paddingLeft: 15,
                                   fontSize: 16,
                                   fontFamily: Fonts.medium,
+                                  color: colors.text,
                                 }}
                               >
                                 {value.name}
@@ -290,6 +290,11 @@ export default function PastOrders() {
                             </View>
                           </View>
                         ))}
+                        {!!order.notes && (
+                          <Text style={{ paddingLeft: 20, paddingTop: 4, paddingBottom: 8, fontSize: 14, fontFamily: Fonts.semiBold, color: colors.text }}>
+                            Note: {order.notes}
+                          </Text>
+                        )}
                         <View style={{ paddingLeft: 25, paddingRight: 25 }}>
                           <PrimaryButton
                             icon="cart.badge.plus"
@@ -333,7 +338,7 @@ const styles = StyleSheet.create({
   },
   placeholderContainer: {
     width: '90%',
-    backgroundColor: '#ebebebff',
+    backgroundColor: 'transparent',
     padding: 14,
     borderRadius: 8,
     shadowColor: "black",
@@ -362,7 +367,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   sectionContainer: {
-    backgroundColor: '#FFF7F7',
+    backgroundColor: 'transparent',
     borderRadius: 8,
     overflow: 'hidden',
   },
@@ -372,13 +377,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
   },
   orderBox: {
-    backgroundColor: '#FFF7F7',
+    backgroundColor: 'transparent',
     padding: 16,
     flexDirection: "row",
     justifyContent: "space-between",
   },
   orderDetails: {
-    backgroundColor: '#ebebebff',
+    backgroundColor: 'transparent',
     padding: 14,
   },
   badgeContainer: {
