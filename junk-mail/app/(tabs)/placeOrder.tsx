@@ -4,11 +4,11 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
   Modal,
   Linking,
 } from "react-native";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { Title } from "@/components/ui/title";
@@ -39,9 +39,9 @@ const MakeTile = React.memo(
     renderAddToCartButton: Function;
     openProductModal: Function;
   }) => (
-    <View style={styles.tile}>
+    <View style={[styles.tile, { backgroundColor: colors.surface }]}>
       <View style={styles.tileDetails}>
-        <Text style={styles.itemText} numberOfLines={undefined}
+        <Text style={[styles.itemText, { color: colors.text }]} numberOfLines={undefined}
           accessible={true}
           accessibilityRole="text"
           accessibilityLabel={item.name}>
@@ -290,12 +290,12 @@ export default function PlaceOrderScreen() {
         accessibilityViewIsModal={true}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
+          <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
             <ScrollView showsVerticalScrollIndicator={false}>
               {selectedItem && (
                 <>
                   <View style={styles.modalHeader}>
-                    <Text style={styles.modalTitle}
+                    <Text style={[styles.modalTitle, { color: colors.text }]}
                       accessible={true}
                       accessibilityRole="header"
                       accessibilityLabel={`Product details for ${selectedItem.name}`}
@@ -328,7 +328,7 @@ export default function PlaceOrderScreen() {
                   </View>
 
                   <View style={styles.modalSection}>
-                    <Text style={styles.modalSectionTitle}
+                    <Text style={[styles.modalSectionTitle, { color: colors.text }]}
                       accessible={true}
                       accessibilityRole="header"
                       accessibilityLabel="Product Details">
@@ -345,8 +345,8 @@ export default function PlaceOrderScreen() {
 
                           return (
                             <View key={index} style={styles.specItem}>
-                              <Text style={styles.specBullet}>•</Text>
-                              <Text style={styles.specText}>
+                              <Text style={[styles.specBullet, { color: colors.primary }]}>•</Text>
+                              <Text style={[styles.specText, { color: colors.text }]}>
                                 {parts[0]}
                                 <Text
                                   style={styles.linkText}
@@ -369,8 +369,8 @@ export default function PlaceOrderScreen() {
                               accessible={true}
                               accessibilityRole="text"
                               accessibilityLabel={spec} >
-                            <Text style={styles.specBullet}>•</Text>
-                            <Text style={styles.specText}>{spec}</Text>
+                            <Text style={[styles.specBullet, { color: colors.primary }]}>•</Text>
+                            <Text style={[styles.specText, { color: colors.text }]}>{spec}</Text>
                           </View>
                         );
                       })}
@@ -424,7 +424,7 @@ const styles = StyleSheet.create({
     tile: {
     borderRadius: 8,
     width:'45%',
-    backgroundColor: "#FFF7F7",
+    backgroundColor: 'transparent',
     margin: 10,
     alignItems: "center",
     paddingVertical: 8,
@@ -457,7 +457,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   modalContent: {
-    backgroundColor: "#FFF7F7",
+    backgroundColor: 'transparent',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     maxHeight: "85%",
@@ -525,14 +525,14 @@ const styles = StyleSheet.create({
   },
   specBullet: {
     fontSize: 16,
-    color: "#324D7F",
+    color: 'transparent',
     marginRight: 8,
     fontWeight: "bold",
     fontFamily: Fonts.regular,
   },
   specText: {
     fontSize: 14,
-    color: "#444",
+    color: 'transparent',
     fontFamily: Fonts.regular,
     flex: 1,
   },

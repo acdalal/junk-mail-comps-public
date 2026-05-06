@@ -5,9 +5,9 @@ import {
   ScrollView,
   StyleSheet,
   TextInput,
-  useColorScheme,
   View,
 } from "react-native";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 import { signUp } from "@/app/utils/accountStorage";
 import { ThemedText } from "@/components/themed-text";
@@ -167,7 +167,7 @@ export default function IndexScreen() {
             <ThemedText style={styles.accountText}>First Name</ThemedText>
             <TextInput
               style={{
-                backgroundColor: "#f0f0f0",
+                backgroundColor: colors.container,
                 opacity: 0.6,
                 padding: 10,
                 marginBottom: 30,
@@ -196,7 +196,7 @@ export default function IndexScreen() {
             </ThemedText>
             <TextInput
               style={{
-                backgroundColor: "#f0f0f0",
+                backgroundColor: colors.container,
                 opacity: 0.6,
                 padding: 10,
                 marginBottom: 30,
@@ -225,7 +225,7 @@ export default function IndexScreen() {
             </ThemedText>
             <TextInput
               style={{
-                backgroundColor: "#f0f0f0",
+                backgroundColor: colors.container,
                 opacity: 0.6,
                 padding: 10,
                 marginBottom: 30,
@@ -257,7 +257,7 @@ export default function IndexScreen() {
             </ThemedText>
             <TextInput
               style={{
-                backgroundColor: "#f0f0f0",
+                backgroundColor: colors.container,
                 opacity: 0.6,
                 padding: 10,
                 marginBottom: 10,
