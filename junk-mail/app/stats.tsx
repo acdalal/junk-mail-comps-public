@@ -4,7 +4,8 @@ import { Colors, Fonts } from '@/constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, useColorScheme, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { loadOrders } from './utils/orderStorage';
 import { itemsData } from '@/constants/products';
 
@@ -97,15 +98,15 @@ export default function Stats() {
           
           {/* Total Orders */}
           <View style={styles.shadowWrapper}>
-            <ThemedView style={styles.card}>
+            <ThemedView style={[styles.card, { backgroundColor: colors.surface }]}>
               <ThemedText 
                 type="subtitle" 
                 style={[styles.cardTitle, { fontFamily: Fonts.semiBold }]}
               >
                 Total Orders {new Date().getFullYear()}
               </ThemedText>
-              <ThemedText 
-                style={[styles.totalNumber, { fontFamily: Fonts.bold }]}
+              <ThemedText
+                style={[styles.totalNumber, { fontFamily: Fonts.bold, color: colors.primary }]}
               >
                 {totalOrders}
               </ThemedText>
@@ -114,7 +115,7 @@ export default function Stats() {
 
           {/* Product Counts */}
           <View style={styles.shadowWrapper}>
-            <ThemedView style={styles.card}>
+            <ThemedView style={[styles.card, { backgroundColor: colors.surface }]}>
               <ThemedText 
                 type="subtitle" 
                 style={[styles.cardTitle, { fontFamily: Fonts.semiBold }]}
@@ -123,7 +124,7 @@ export default function Stats() {
               </ThemedText>
               {Object.entries(productCounts) .sort((a, b) => b[1] - a[1]).map(([productName, count]) => (
 
-                <View key={productName} style={styles.productRow}>
+                <View key={productName} style={[styles.productRow, { borderBottomColor: colors.border }]}>
                   <ThemedText style={[styles.productName, { fontFamily: Fonts.regular }]}>
                     {productName}
                   </ThemedText>
@@ -173,7 +174,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   card: {
-    backgroundColor: '#FFF7F7',
+    backgroundColor: 'transparent',
     borderRadius: 8,
     padding: 20,
     overflow: 'hidden',
@@ -186,7 +187,7 @@ const styles = StyleSheet.create({
   totalNumber: {
     fontSize: 48,
     textAlign: 'center',
-    color: '#324D7F',
+    color: 'transparent',
     paddingVertical: 15,
     lineHeight: 40,
   },
@@ -195,7 +196,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: 'transparent',
   },
   productName: {
     fontSize: 16,

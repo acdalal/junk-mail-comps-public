@@ -13,7 +13,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { Link, useRouter } from "expo-router";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useCallback, useState } from "react";
-import { useColorScheme } from "react-native";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 
 /* This is the Home page. On this page, the user is introduced to the Junk Mail

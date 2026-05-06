@@ -170,7 +170,8 @@
 
 import { Pressable, StyleSheet, Text, View, AccessibilityProps  } from "react-native";
 import { IconSymbol } from "@/components/ui/icon-symbol";
-import { Fonts } from "@/constants/theme";
+import { Colors, Fonts } from "@/constants/theme";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 interface AddToCartProps {
   itemName: string;
@@ -193,6 +194,8 @@ export function AddToCart({
   onDecrement,
   size = "medium",
 }: AddToCartProps) {
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme];
   const isLarge = size === "large";
   const isSmall = size === "small";
 
@@ -203,7 +206,8 @@ export function AddToCart({
         style={[
           styles.addButton,
           isSmall && styles.addButtonSmall,
-          isLarge && styles.addButtonLarge
+          isLarge && styles.addButtonLarge,
+          { backgroundColor: colors.buttonBackground },
         ]}
         onPress={onAdd}
         accessible={true}
@@ -214,12 +218,13 @@ export function AddToCart({
         <IconSymbol
           name="cart.badge.plus"
           size={isLarge ? 22 : isSmall ? 18 : 20}
-          color="#FFF7F7"
+          color={colors.buttonText}
         />
         <Text style={[
           styles.addButtonText,
           isSmall && styles.addButtonTextSmall,
-          isLarge && styles.addButtonTextLarge
+          isLarge && styles.addButtonTextLarge,
+          { color: colors.buttonText },
         ]}
         accessible={true}
         accessibilityRole="adjustable"
@@ -244,12 +249,14 @@ export function AddToCart({
     <View style={[
       styles.counterContainer,
       isSmall && styles.counterContainerSmall,
-      isLarge && styles.counterContainerLarge
+      isLarge && styles.counterContainerLarge,
+      { backgroundColor: colors.buttonBackground },
     ]}>
       <Pressable style={[
         styles.counterButton,
         isSmall && styles.counterButtonSmall,
-        isLarge && styles.counterButtonLarge
+        isLarge && styles.counterButtonLarge,
+        { backgroundColor: colors.buttonText },
       ]} onPress={onDecrement}
         accessible={true}
         accessibilityRole="button"
@@ -259,14 +266,16 @@ export function AddToCart({
         <Text style={[
           styles.counterSymbol,
           isSmall && styles.counterSymbolSmall,
-          isLarge && styles.counterSymbolLarge
+          isLarge && styles.counterSymbolLarge,
+          { color: colors.buttonBackground },
         ]}>-</Text>
       </Pressable>
 
       <Text style={[
         styles.counter,
         isSmall && styles.counterSmall,
-        isLarge && styles.counterLarge
+        isLarge && styles.counterLarge,
+        { color: colors.buttonText },
       ]}>{count}</Text>
 
       <Pressable
@@ -276,7 +285,8 @@ export function AddToCart({
           styles.counterButton,
           isSmall && styles.counterButtonSmall,
           isLarge && styles.counterButtonLarge,
-          count >= limit && styles.disabledButton
+          { backgroundColor: colors.buttonText },
+          count >= limit && styles.disabledButton,
         ]}
         accessible={true}
         accessibilityRole="button"
@@ -289,7 +299,8 @@ export function AddToCart({
             styles.counterSymbol,
             isSmall && styles.counterSymbolSmall,
             isLarge && styles.counterSymbolLarge,
-            count >= limit && styles.disabledText
+            { color: colors.buttonBackground },
+            count >= limit && styles.disabledText,
           ]}
         >
           +

@@ -1,4 +1,5 @@
-import { StyleSheet, Text, TextStyle, useColorScheme, AccessibilityProps } from "react-native";
+import { StyleSheet, Text, TextStyle, AccessibilityProps } from "react-native";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { Colors, Fonts } from "@/constants/theme";
 
 interface TitleProps extends AccessibilityProps {

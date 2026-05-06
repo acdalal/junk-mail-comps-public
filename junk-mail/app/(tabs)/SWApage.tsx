@@ -4,11 +4,11 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
   Alert,
   Modal,
 } from "react-native";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 import {
   clearOrders,
@@ -248,7 +248,7 @@ export default function OrderConfirmationScreen() {
           style={styles.modalOverlay}
           onPress={() => setMenuVisible(false)}
         >
-          <View style={styles.menuContainer}>
+          <View style={[styles.menuContainer, { backgroundColor: colors.surface }]}>
             <Pressable
               onPress={handleStatsNavigation}
               style={styles.menuItem}
@@ -284,11 +284,12 @@ export default function OrderConfirmationScreen() {
           {sortedOrders.map((order, index) => (
             <View key={order.id}>
               <View style={styles.shadowWrapper}>
-                <View style={styles.sectionContainer}>
+                <View style={[styles.sectionContainer, { backgroundColor: colors.surface }]}>
                   <Pressable
                     onPress={() => toggle(order.id)}
                     style={[
                       styles.orderBox,
+                      { backgroundColor: colors.surface },
                       checkedOrders[order.id] && styles.orderBoxChecked,
                     ]}
                   >
@@ -357,7 +358,7 @@ export default function OrderConfirmationScreen() {
                   </Pressable>
 
                   {expanded === order.id && (
-                    <View style={styles.orderDetails}>
+                    <View style={[styles.orderDetails, { backgroundColor: colors.container }]}>
                       <View>
                         <Text
                           style={{
@@ -413,13 +414,13 @@ export default function OrderConfirmationScreen() {
                           Order:
                         </Text>
                       </View>
-                      <View style={styles.tableContainer}>
-                        <View style={[styles.tableRow, styles.tableHeader]}>
+                      <View style={[styles.tableContainer, { backgroundColor: colors.surface }]}>
+                        <View style={[styles.tableRow, styles.tableHeader, { backgroundColor: colors.primary }]}>
                           <Text
                             style={[
                               styles.tableCell,
                               styles.tableHeaderText,
-                              { flex: 2 },
+                              { flex: 2, color: colors.buttonText },
                             ]}
                           >
                             Item
@@ -428,7 +429,7 @@ export default function OrderConfirmationScreen() {
                             style={[
                               styles.tableCell,
                               styles.tableHeaderText,
-                              { flex: 1, textAlign: "center" },
+                              { flex: 1, textAlign: "center", color: colors.buttonText },
                             ]}
                           >
                             Quantity
@@ -514,7 +515,7 @@ const styles = StyleSheet.create({
 
   reviewTile: {
     flex: 1,
-    backgroundColor: "#FFF7F7",
+    backgroundColor: 'transparent',
     marginTop: 15,
     marginBottom: 115,
     marginLeft: 20,
@@ -532,7 +533,7 @@ const styles = StyleSheet.create({
 
   tile: {
     flex: 1,
-    backgroundColor: "#FFF7F7",
+    backgroundColor: 'transparent',
     margin: 10,
     height: 200,
     justifyContent: "space-between",
@@ -688,18 +689,18 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   sectionContainer: {
-    backgroundColor: "#FFF7F7",
+    backgroundColor: 'transparent',
     borderRadius: 8,
     overflow: "hidden",
   },
   orderBox: {
-    backgroundColor: "#FFF7F7",
+    backgroundColor: 'transparent',
     padding: 16,
     flexDirection: "row",
     justifyContent: "space-between",
   },
   orderDetails: {
-    backgroundColor: "#ebebebff",
+    backgroundColor: 'transparent',
     padding: 14,
   },
 
@@ -730,7 +731,7 @@ const styles = StyleSheet.create({
   },
 
   menuContainer: {
-    backgroundColor: "#FFF7F7",
+    backgroundColor: 'transparent',
     marginTop: 120,
     marginRight: 20,
     borderRadius: 12,
@@ -774,11 +775,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   tableHeader: {
-    backgroundColor: Colors.light.primary,
+    backgroundColor: 'transparent',
   },
   tableHeaderText: {
     fontFamily: Fonts.semiBold,
-    color: Colors.light.buttonText,
+    color: 'transparent',
     textAlign: "left",
   },
   tableCell: {
