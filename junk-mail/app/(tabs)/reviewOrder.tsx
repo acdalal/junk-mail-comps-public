@@ -13,7 +13,7 @@ import { ThemedText } from "@/components/themed-text";
 import { AddToCart } from "@/components/ui/add-to-cart";
 import { PrimaryButton } from '@/components/ui/primaryButton';
 import { Title } from "@/components/ui/title";
-import { DEFAULT_LIMIT, itemLimits } from "@/constants/products";
+import { applyCountDelta, getItemLimit } from "@/utils/orderLimits";
 import { Colors, Fonts } from '@/constants/theme';
 import { Order, useOrder } from "@/context/orderContext";
 import { Ionicons } from '@expo/vector-icons';
@@ -45,17 +45,11 @@ export default function ReviewOrderScreen() {
   }, [orderToReorder]);
 
   const updateCount = (item: string, delta: number) => {
-    const limit = itemLimits[item] || DEFAULT_LIMIT;
-    const current = order[item] || 0;
-    const newCount = current + delta;
-    if (newCount <= 0) {
+    const result = applyCountDelta(item, order[item] || 0, delta);
+    if (result.action === "remove") {
       removeItem(item);
-    }
-    else if (newCount > limit) {
-      return;
-    }
-    else {
-      updateOrdercount(item, newCount);
+    } else if (result.action === "update") {
+      updateOrdercount(item, result.newCount);
     }
   };
 
@@ -157,7 +151,7 @@ export default function ReviewOrderScreen() {
                     <AddToCart
                       itemName={item}
                       count={qty}
-                      limit={itemLimits[item] || DEFAULT_LIMIT}
+                      limit={getItemLimit(item)}
                       isInCart={true}
                       onAdd={() => { }}
                       onIncrement={() => updateCount(item, +1)}
