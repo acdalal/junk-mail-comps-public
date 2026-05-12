@@ -1,15 +1,23 @@
 import {
+  Animated,
+  LayoutAnimation,
+  Linking,
+  Platform,
   Pressable,
   ScrollView,
   Text,
+  UIManager,
   View,
-  Linking,
 } from "react-native";
+
+if (Platform.OS === "android") {
+  UIManager.setLayoutAnimationEnabledExperimental?.(true);
+}
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
 import { Colors } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+import { useRef, useState,useEffect} from "react";
 import { faqStyles } from "@/components/ui/faq-styles";
 import { Title } from "@/components/ui/title";
 
@@ -21,6 +29,28 @@ export default function ProductInfoScreen() {
   const colors = Colors[colorScheme];
 
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const rotateAnims = useRef(Array.from({ length: 6 }, () => new Animated.Value(0))).current;
+  const translateAnims = useRef(Array.from({ length: 6 }, () => new Animated.Value(40))).current;
+  const fadeAnims = useRef(Array.from({ length: 6 }, () => new Animated.Value(0))).current;
+  useEffect(() => {
+  Animated.stagger(
+    80,
+    translateAnims.map((anim, i) =>
+      Animated.parallel([
+        Animated.timing(anim, {
+          toValue: 0,
+          duration: 400,
+          useNativeDriver: true,
+        }),
+        Animated.timing(fadeAnims[i], {
+          toValue: 1,
+          duration: 400,
+          useNativeDriver: true,
+        }),
+      ])
+    )
+  ).start();
+}, []);
   const faq = [
     {
       Q: "How can I use the Junk Mail App?",
@@ -92,7 +122,13 @@ export default function ProductInfoScreen() {
   ];
   
   const toggleExpand = (index: number) => {
-    setExpandedIndex(expandedIndex === index ? null : index);
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    const isExpanding = expandedIndex !== index;
+    if (expandedIndex !== null && expandedIndex !== index) {
+      Animated.timing(rotateAnims[expandedIndex], { toValue: 0, duration: 300, useNativeDriver: true }).start();
+    }
+    Animated.timing(rotateAnims[index], { toValue: isExpanding ? 1 : 0, duration: 300, useNativeDriver: true }).start();
+    setExpandedIndex(isExpanding ? index : null);
   };
 
   return (
@@ -109,9 +145,16 @@ export default function ProductInfoScreen() {
         accessible={false}
       >
         {faq.map((faq, index) => (
-          <View
+          <Animated.View
             key={index}
-            style={[faqStyles.faqItem, { backgroundColor: colors.surface }]}
+            style={[
+              faqStyles.faqItem,
+              { backgroundColor: colors.surface },
+              {
+                opacity: fadeAnims[index],
+                transform: [{ translateY: translateAnims[index] }],
+              },
+            ]}
             accessible={false}
           >
             <Pressable
@@ -132,12 +175,9 @@ export default function ProductInfoScreen() {
               >
                 {faq.Q}
               </Text>
-              <Ionicons
-                name={expandedIndex === index ? "chevron-up" : "chevron-down"}
-                size={24}
-                color={colors.buttonText}
-                accessible={false}
-              />
+              <Animated.View style={{ transform: [{ rotate: rotateAnims[index].interpolate({ inputRange: [0, 1], outputRange: ["0deg", "180deg"] }) }] }}>
+                <Ionicons name="chevron-down" size={24} color={colors.buttonText} accessible={false} />
+              </Animated.View>
             </Pressable>
 
             {expandedIndex === index && (
@@ -194,7 +234,7 @@ export default function ProductInfoScreen() {
                 )}
               </View>
             )}
-          </View>
+          </Animated.View>
         ))}
       </ScrollView>
     </View>
