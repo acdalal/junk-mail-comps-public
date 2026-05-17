@@ -4,7 +4,7 @@ import {
 } from "react-native";
 
 import { getCurrentUser } from "@/app/utils/accountStorage";
-import { loadOrders } from "@/app/utils/orderStorage";
+import { cancelOrder, loadOrders } from "@/app/utils/orderStorage";
 import { Title } from "@/components/ui/title";
 import { Colors, Fonts } from "@/constants/theme";
 import { IconSymbol } from "@/components/ui/icon-symbol";
@@ -225,16 +225,15 @@ export default function PastOrders() {
                       </View>
 
                       {/* Shows delivered on date when order filled*/}
-                      {isDelivered && (
+                      
                         <Text style={styles.deliveredText}>
-                          Delivered {""}
-                          {new Date(order.createdAt).toLocaleDateString(
+                            {isDelivered ? "Delivered " + 
+                          new Date(order.createdAt).toLocaleDateString(
                             undefined,
                             {month: "short",
-                            day: "numeric",}
-                          )}
+                            day: "numeric",})
+                            : "Order in Progress"}
                         </Text>
-                      )}
                     </Pressable>
 
                     {expanded === order.id && (
@@ -284,20 +283,40 @@ export default function PastOrders() {
                             </View>
                           </View>
                         ))}
-                        <View style={{ paddingLeft: 25, paddingRight: 25 }}>
-                          <PrimaryButton
-                            icon="cart.badge.plus"
-                            title="Add To Cart"
-                            onPress={() => router.push({
-                              pathname: "/reviewOrder",
-                              params: { orderToReorder: JSON.stringify(order) }
-                            })}
-                            accessible={true}
-                            accessibilityLabel="Add To Cart"
-                            accessibilityHint="Reorder this past order by adding all items to your cart"
-                          >
-                          </PrimaryButton>
-                        </View>
+                        {isDelivered ?
+                          <View style={{ paddingLeft: 25, paddingRight: 25 }}>
+                            <PrimaryButton
+                              icon="cart.badge.plus"
+                              title="Add To Cart"
+                              onPress={() => router.push({
+                                pathname: "/reviewOrder",
+                                params: { orderToReorder: JSON.stringify(order) }
+                              })}
+                              accessible={true}
+                              accessibilityLabel="Add To Cart"
+                              accessibilityHint="Reorder this past order by adding all items to your cart"
+                            >
+                            </PrimaryButton>
+                          </View>
+                        :
+                          <View style={{ paddingLeft: 25, paddingRight: 25 }}>
+                            <PrimaryButton
+                              icon="xmark.circle"
+                              title="Cancel Order"
+                              onPress={() => {
+                                    cancelOrder(order.id);
+                                    setGroupedOrders((groupedOrders) => {
+                                      return groupedOrders.filter((groupedOrder) => groupedOrder.createdAt !== order.createdAt)
+                                    });
+                                }
+                              }
+                              accessible={true}
+                              accessibilityLabel="Cancel Order"
+                              accessibilityHint="Cancel this order so it will no longer be delivered"
+                            >
+                            </PrimaryButton>
+                          </View>
+                            }
                       </View>
                     )}
                   </View>

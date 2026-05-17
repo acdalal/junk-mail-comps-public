@@ -134,3 +134,12 @@ export async function clearOrders() {
     console.error("Clear orders error:", e);
   }
 }
+
+export async function cancelOrder(orderId: string) {
+  try {
+    const orderRef = doc(db, ORDERS_COLLECTION, orderId);
+    await deleteDoc(orderRef);
+  } catch (e) {
+    console.log("Cancel order error", e);
+  }
+}
