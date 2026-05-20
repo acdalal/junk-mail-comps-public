@@ -14,7 +14,7 @@ import { faqStyles } from "@/components/ui/faq-styles";
 import { Title } from "@/components/ui/title";
 
 /* This is the FAQ page. Users can look at a few common questions about 
-   the Junk Mail program to learn more about it. */
+   the Junk Mail program to learn more about it. For more information, please check the Junk Mail homepage. */
 
 export default function ProductInfoScreen() {
   const colorScheme = useColorScheme() ?? 'light';
