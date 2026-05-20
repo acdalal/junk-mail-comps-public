@@ -3,11 +3,11 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
   LayoutAnimation,
   Pressable,
 } from 'react-native';
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 import { ThemedText } from "@/components/themed-text";
 import { getCurrentUser } from '@/app/utils/accountStorage';
@@ -67,7 +67,7 @@ export default function OrderConfirmationScreen() {
           paddingBottom: 60
         }}
       >
-        <View style={styles.reviewTile}>
+        <View style={[styles.reviewTile, { backgroundColor: colors.surface }]}>
           <Image
             source={require('@/assets/images/junkmaillogobackground.png')}
             style={styles.JunkMailLogo}
@@ -92,7 +92,7 @@ export default function OrderConfirmationScreen() {
           </ThemedText>
         </View>
         <View style={styles.shadowWrapper}>
-          <View style={styles.sectionContainer}>
+          <View style={[styles.sectionContainer, { backgroundColor: colors.surface }]}>
             <Pressable
               onPress={() => toggle(order.id + '-summary')}
               style={styles.orderBox}
@@ -113,7 +113,7 @@ export default function OrderConfirmationScreen() {
             {/*Logic for when the box is expanded*/}
             {expanded[order.id + '-summary'] && (
               <View
-                style={styles.orderDetails}
+                style={[styles.orderDetails, { backgroundColor: colors.container }]}
                 accessible={true}
                 accessibilityRole="summary"
                 accessibilityLabel={`Order contains ${Object.keys(order).length} items`}
@@ -172,7 +172,7 @@ export default function OrderConfirmationScreen() {
           </View>
         </View>
         <View style={styles.shadowWrapper}>
-          <View style={styles.sectionContainer}>
+          <View style={[styles.sectionContainer, { backgroundColor: colors.surface }]}>
             <Pressable
               onPress={() => toggle(order.id + '-delivery')}
               style={styles.orderBox}
@@ -191,7 +191,7 @@ export default function OrderConfirmationScreen() {
             </Pressable>
             {expanded[order.id + '-delivery'] && (
               <View
-                style={styles.orderDetails}
+                style={[styles.orderDetails, { backgroundColor: colors.container }]}
                 accessible={true}
                 accessibilityRole="text"
                 accessibilityLabel={`Delivery information for ${user?.displayName || "No Name Provided"}, email ${user?.email}`}
@@ -225,7 +225,7 @@ export default function OrderConfirmationScreen() {
 
 const styles = StyleSheet.create({
   reviewTile: {
-    backgroundColor: '#FFF7F7',
+    backgroundColor: 'transparent',
     marginTop: 15,
     marginBottom: 0,
     marginHorizontal: 20,
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   sectionContainer: {
-    backgroundColor: '#FFF7F7',
+    backgroundColor: 'transparent',
     borderRadius: 8,
     overflow: 'hidden',
   },
@@ -264,13 +264,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
   },
   orderBox: {
-    backgroundColor: '#FFF7F7',
+    backgroundColor: 'transparent',
     padding: 16,
     flexDirection: "row",
     justifyContent: "space-between",
   },
   orderDetails: {
-    backgroundColor: '#ebebebff',
+    backgroundColor: 'transparent',
     padding: 14,
   },
   badgeContainer: {

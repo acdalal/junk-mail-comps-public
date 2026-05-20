@@ -2,10 +2,10 @@ import {
   KeyboardAvoidingView,
   Platform, Pressable, ScrollView, StyleSheet,
   TextInput,
-  useColorScheme,
   Alert,
   View
 } from "react-native";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 import { resetPassword, signIn } from "@/app/utils/accountStorage";
 import { ThemedText } from "@/components/themed-text";
@@ -130,7 +130,7 @@ export default function IndexScreen() {
               accessibilityRole="text">Email</ThemedText>
             <TextInput
               style={{
-                backgroundColor: "#f0f0f0",
+                backgroundColor: colors.container,
                 opacity: 0.6,
                 padding: 10,
                 marginBottom: 20,
@@ -158,7 +158,7 @@ export default function IndexScreen() {
               accessibilityRole="text">Password</ThemedText>
             <TextInput
               style={{
-                backgroundColor: "#f0f0f0",
+                backgroundColor: colors.container,
                 opacity: 0.6,
                 padding: 10,
                 marginBottom: 10,

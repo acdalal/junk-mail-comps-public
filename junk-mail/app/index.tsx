@@ -9,7 +9,7 @@ import { PrimaryButton } from "@/components/ui/primaryButton";
 import { Colors, Fonts } from '@/constants/theme';
 import { Link, router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { useColorScheme } from 'react-native';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import { onAuthChange } from "@/app/utils/accountStorage";
 
 /* This is the Sign Up/Log in page. On this page, the user can sign up for an account

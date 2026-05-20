@@ -2,9 +2,10 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  Text, TextInput, useColorScheme,
+  Text, TextInput,
   View
 } from 'react-native';
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 import { getCurrentUser } from '@/app/utils/accountStorage';
 import { saveOrder } from "@/app/utils/orderStorage";
@@ -94,7 +95,7 @@ export default function ReviewOrderScreen() {
           accessibilityRole="header"
           accessibilityLabel="Review Order"
         >Review Order</Title>
-        <View style={styles.reviewTile}>
+        <View style={[styles.reviewTile, { backgroundColor: colors.surface }]}>
           <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 10 }}>
             <Link href="/placeOrder" asChild>
               <Pressable
@@ -129,7 +130,7 @@ export default function ReviewOrderScreen() {
             contentContainerStyle={{ alignItems: 'center' }}
           >
             {Object.entries(order).map(([item, qty]) => (
-              <View key={item} style={styles.orderContainer}>
+              <View key={item} style={[styles.orderContainer, { backgroundColor: colors.container }]}>
                 <View style={styles.orderRow}>
                   <View style={styles.itemLabelRow}>
                     <Pressable onPress={() => removeItem(item)}
@@ -178,7 +179,7 @@ export default function ReviewOrderScreen() {
             Optional Notes
           </Text> */}
           <TextInput
-            style={styles.notesBox}
+            style={[styles.notesBox, { backgroundColor: colors.container }]}
             multiline
             placeholder="Add an optional note..."
             placeholderTextColor={colors.text}
@@ -186,7 +187,7 @@ export default function ReviewOrderScreen() {
             onChangeText={newText => setText(newText)}>
           </TextInput>
         </View>
-        <View style={styles.deliveryBox}>
+        <View style={[styles.deliveryBox, { backgroundColor: colors.container }]}>
           <Text style={{ fontSize: 18, fontWeight: "600", marginBottom: 10, fontFamily: Fonts.bold, }}
             accessible={true}
             accessibilityRole="header"
@@ -247,7 +248,7 @@ const styles = StyleSheet.create({
   },
   reviewTile: {
     flex: 1,
-    backgroundColor: '#FFF7F7',
+    backgroundColor: 'transparent',
     margin: 20,
     marginBottom: 5,
     borderRadius: 8,
@@ -260,7 +261,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   orderContainer: {
-    backgroundColor: '#ebebebff',
+    backgroundColor: 'transparent',
     borderRadius: 8,
     width: '90%',
     marginVertical: 6,
@@ -300,7 +301,7 @@ const styles = StyleSheet.create({
   },
   deliveryBox: {
     width: '90%',
-    backgroundColor: '#ebebebff',
+    backgroundColor: 'transparent',
     padding: 14,
     borderRadius: 8,
     shadowColor: "black",
@@ -314,7 +315,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   notesBox: {
-    backgroundColor: "#ebebebff",
+    backgroundColor: 'transparent',
     height: 65,
     marginTop: 10,
     marginBottom: 10,
