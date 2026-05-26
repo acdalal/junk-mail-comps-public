@@ -1,50 +1,13 @@
-// import AsyncStorage from "@react-native-async-storage/async-storage";
+/**
+ * @file Data persistence utility for managing order data in a React Native application.
+ * * This module utilizes `@react-native-async-storage/async-storage` to localy save, load, 
+ * and clear two types of order-related data across app sessions:
+ * 1. "all_orders" (ORDERS_KEY): Stores an array of all order objects.
+ * 2. "checked_orders" (CHECKED_KEY): Stores an object tracking the "checked" or completion status of orders.
+ * * All storage operations are asynchronous and safely wrapped in try/catch blocks 
+ * with fallback return values (empty array/object) to handle potential read/write errors.
+ */
 
-// const ORDERS_KEY = "all_orders";
-// const CHECKED_KEY = "checked_orders";
-
-// export async function loadOrders() {
-//   try {
-//     const stored = await AsyncStorage.getItem(ORDERS_KEY);
-//     return stored ? JSON.parse(stored) : [];
-//   } catch (e) {
-//     console.error("Load orders error:", e);
-//     return [];
-//   }
-// }
-
-// export async function saveOrder(order: any) {
-//   try {
-//     const existing = await loadOrders();
-//     const updated = [...existing, order];
-//     await AsyncStorage.setItem(ORDERS_KEY, JSON.stringify(updated));
-//   } catch (e) {
-//     console.error("Save order error:", e);
-//   }
-// }
-
-// export async function loadCheckedOrders() {
-//   try {
-//     const stored = await AsyncStorage.getItem(CHECKED_KEY);
-//     return stored ? JSON.parse(stored) : {};
-//   } catch (e) {
-//     console.error("Load checked orders error:", e);
-//     return {};
-//   }
-// }
-
-// export async function saveCheckedOrders(checked: any) {
-//   try {
-//     await AsyncStorage.setItem(CHECKED_KEY, JSON.stringify(checked));
-//   } catch (e) {
-//     console.error("Save checked orders error:", e);
-//   }
-// }
-
-//  export async function clearOrders(){
-//   await AsyncStorage.removeItem(ORDERS_KEY)
-//   await AsyncStorage.removeItem(CHECKED_KEY)
-// }
 import {
   addDoc,
   collection,
