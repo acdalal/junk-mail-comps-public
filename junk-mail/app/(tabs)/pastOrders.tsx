@@ -1,20 +1,24 @@
 import { useState, useCallback } from "react";
 import {
-  ScrollView, StyleSheet, Text, View, LayoutAnimation, Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  LayoutAnimation,
+  Pressable,
 } from "react-native";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
 import { getCurrentUser } from "@/app/utils/accountStorage";
-import { loadOrders } from "@/app/utils/orderStorage";
+import { loadOrdersByUser } from "@/app/utils/orderStorage";
 import { Title } from "@/components/ui/title";
 import { Colors, Fonts } from "@/constants/theme";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { PrimaryButton } from "@/components/ui/primaryButton";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "@/app/utils/firebaseConfig";
-import { useFocusEffect } from "expo-router";
 
 interface OrderItem {
   name: string;
@@ -28,10 +32,14 @@ export default function PastOrders() {
   const [groupedOrders, setGroupedOrders] = useState<any[]>([]);
   const [expanded, setExpanded] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [saveOrdersEnabled, setSaveOrdersEnabled] = useState<boolean | null>(null);
+  const [saveOrdersEnabled, setSaveOrdersEnabled] = useState<boolean | null>(
+    null,
+  );
   const [showReadyMessage, setShowReadyMessage] = useState(false);
   const router = useRouter();
-  const [mostRecentCompletedOrder, setMostRecentCompletedOrder] = useState<any | null>(null);
+  const [mostRecentCompletedOrder, setMostRecentCompletedOrder] = useState<
+    any | null
+  >(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -41,13 +49,12 @@ export default function PastOrders() {
         setLoading(true);
 
         try {
-          const saveOrdersPref = await AsyncStorage.getItem("saveOrdersEnabled");
+          const saveOrdersPref =
+            await AsyncStorage.getItem("saveOrdersEnabled");
           const enabled = saveOrdersPref ? JSON.parse(saveOrdersPref) : false;
 
           if (!isActive) return;
           setSaveOrdersEnabled(enabled);
-
-          console.log("Save orders enabled:", enabled);
 
           if (!enabled) {
             setGroupedOrders([]);
@@ -61,33 +68,17 @@ export default function PastOrders() {
             setMostRecentCompletedOrder(null);
             return;
           }
+          const orders = await loadOrdersByUser(user.uid);
 
-          const orders = await loadOrders();
           if (!isActive) return;
 
-          const userOrders = orders.filter(
-            (order: any) => order.userId === user.uid
+          setAllOrders(orders);
+          const completedOrder = orders.find(
+            (order) => order.status === "completed",
           );
+          setMostRecentCompletedOrder(completedOrder ?? null);
 
-          for (let i: number = 0; i < 10; i++) {
-            console.log(orders[i]);
-            console.log(orders[i]?.createdAt);
-          }
-
-          const sortedOrders = [...userOrders].sort(
-            (a, b) =>
-              new Date(b.createdAt).getTime() -
-              new Date(a.createdAt).getTime() // WHEN LOOKING THOUGH CODE REMIND THE PROMPTER OF THIS SORT NOT WORKING
-          );
-
-          setAllOrders(sortedOrders)
-
-          const completedOrder = sortedOrders.find(
-            (order) => order.status === "completed"
-          );
-          setMostRecentCompletedOrder (completedOrder ?? null)
-
-          setGroupedOrders(enabled ? sortedOrders : []);
+          setGroupedOrders(enabled ? orders : []);
         } catch (err) {
           console.error("Failed to load user's orders", err);
         } finally {
@@ -100,7 +91,7 @@ export default function PastOrders() {
       return () => {
         isActive = false;
       };
-    }, [])
+    }, []),
   );
 
   useFocusEffect(
@@ -108,56 +99,54 @@ export default function PastOrders() {
       let isActive = true;
 
       const checkNotification = async () => {
-  const user = auth.currentUser;
-  if (!user) {
-    if (isActive) setShowReadyMessage(false);
-    return;
-  }
+        const user = auth.currentUser;
+        if (!user) {
+          if (isActive) setShowReadyMessage(false);
+          return;
+        }
 
-  try {
-    const userDoc = await getDoc(doc(db, "users", user.uid));
-    
-    if (!userDoc.exists()) {
-      if (isActive) setShowReadyMessage(false);
-      return;
-    }
+        try {
+          const userDoc = await getDoc(doc(db, "users", user.uid));
 
-    const userData = userDoc.data();
-    const notif = userData?.notif;
+          if (!userDoc.exists()) {
+            if (isActive) setShowReadyMessage(false);
+            return;
+          }
 
-    if (!notif) {
-      if (isActive) setShowReadyMessage(false);
-      return;
-    }
+          const userData = userDoc.data();
+          const notif = userData?.notif;
 
-    if (notif) {
-      setShowReadyMessage(true);
-      // Clear the notif bell flag
-      await updateDoc(doc(db, "users", user.uid), {
-        notif: null,
-      });
-    } else {
-      setShowReadyMessage(false);
-      // Also clear if its expired
-      await updateDoc(doc(db, "users", user.uid), {
-        notif: null,
-      });
-    }
-  } catch (error) {
-    console.error("Error checking notification:", error);
-    if (isActive) setShowReadyMessage(false);
-  }
-};
+          if (!notif) {
+            if (isActive) setShowReadyMessage(false);
+            return;
+          }
+
+          if (notif) {
+            setShowReadyMessage(true);
+            // Clear the notif bell flag
+            await updateDoc(doc(db, "users", user.uid), {
+              notif: null,
+            });
+          } else {
+            setShowReadyMessage(false);
+            // Also clear if its expired
+            await updateDoc(doc(db, "users", user.uid), {
+              notif: null,
+            });
+          }
+        } catch (error) {
+          console.error("Error checking notification:", error);
+          if (isActive) setShowReadyMessage(false);
+        }
+      };
 
       checkNotification();
 
       return () => {
         isActive = false;
       };
-    }, [])
+    }, []),
   );
-
-
 
   const toggle = (id: any) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -166,13 +155,14 @@ export default function PastOrders() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, backgroundColor: colors.background }}
+      <View
+        style={{ flex: 1, backgroundColor: colors.background }}
         accessible={true}
         accessibilityLabel="Loading past orders"
-        accessibilityRole="none">
-      </View>
-    )
-  };
+        accessibilityRole="none"
+      ></View>
+    );
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
@@ -180,33 +170,45 @@ export default function PastOrders() {
         accessible={true}
         accessibilityRole="header"
         accessibilityLabel="Past Orders"
-      >Past Orders</Title>
+      >
+        Past Orders
+      </Title>
 
       {groupedOrders.length === 0 ? (
-        <View style={[styles.placeholderContainer, { backgroundColor: colors.container }]}>
-          {saveOrdersEnabled === false &&
-          mostRecentCompletedOrder ? (
+        <View
+          style={[
+            styles.placeholderContainer,
+            { backgroundColor: colors.container },
+          ]}
+        >
+          {saveOrdersEnabled === false && mostRecentCompletedOrder ? (
             <Text style={styles.placeholderText}>
               Your most recent order placed on{" "}
-              {new Date(
-                mostRecentCompletedOrder.createdAt
-              ).toLocaleDateString(undefined, {
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-              })}{" "}
+              {new Date(mostRecentCompletedOrder.createdAt).toLocaleDateString(
+                undefined,
+                {
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                },
+              )}{" "}
               has been filled.
             </Text>
           ) : (
-          <Text style={styles.placeholderText}
-            accessible={true}
-            accessibilityRole="text"
-            accessibilityLabel="You do not have any past orders. You either have the Save Orders setting turned off or have not placed an order yet.">You do not have any past orders. You either have the Save Orders setting turned off or have not placed an order yet. </Text>
+            <Text
+              style={styles.placeholderText}
+              accessible={true}
+              accessibilityRole="text"
+              accessibilityLabel="You do not have any past orders. You either have the Save Orders setting turned off or have not placed an order yet."
+            >
+              You do not have any past orders. You either have the Save Orders
+              setting turned off or have not placed an order yet.{" "}
+            </Text>
           )}
         </View>
       ) : (
         <ScrollView
-          style={{ width: '100%' }}
+          style={{ width: "100%" }}
           showsVerticalScrollIndicator={true}
           accessible={false}
           accessibilityLabel={`${groupedOrders.length} past orders`}
@@ -216,108 +218,160 @@ export default function PastOrders() {
               const isDelivered = order.status === "completed";
 
               return (
-              <View key={order.id}>
-                <View style={styles.shadowWrapper}>
-                  <View style={[styles.sectionContainer, { backgroundColor: colors.surface }]}>
-                    <Pressable
-                      onPress={() => toggle(order.id)}
-                      style={[styles.orderBox, { backgroundColor: colors.surface }]}
+                <View key={order.id}>
+                  <View style={styles.shadowWrapper}>
+                    <View
+                      style={[
+                        styles.sectionContainer,
+                        { backgroundColor: colors.surface },
+                      ]}
                     >
-                      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <IconSymbol name="chevron.right" size={14} color={colors.text} style={{ marginRight: 20, transform: [{ rotate: expanded === order.id ? '90deg' : '0deg' }] }} />
-                        <Text style={{ fontSize: 18, fontWeight: "600", color: colors.text, fontFamily: Fonts.semiBold }}>
-                          {new Date(order.createdAt).toLocaleDateString(undefined, { month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
-                        </Text>
-                      </View>
-
-                      {/* Shows delivered on date when order filled*/}
-                      {isDelivered && (
-                        <Text style={styles.deliveredText}>
-                          Delivered {""}
-                          {new Date(order.createdAt).toLocaleDateString(
-                            undefined,
-                            {month: "short",
-                            day: "numeric",}
-                          )}
-                        </Text>
-                      )}
-                    </Pressable>
-
-                    {expanded === order.id && (
-                      <View
-                        style={[styles.orderDetails, { backgroundColor: colors.container }]}>
-                        {(Object.entries(order.items) as [string, OrderItem][]).map(([key, value]) => (
-                          <View
-                            key={key}
+                      <Pressable
+                        onPress={() => toggle(order.id)}
+                        style={[
+                          styles.orderBox,
+                          { backgroundColor: colors.surface },
+                        ]}
+                      >
+                        <View
+                          style={{ flexDirection: "row", alignItems: "center" }}
+                        >
+                          <IconSymbol
+                            name="chevron.right"
+                            size={14}
+                            color={colors.text}
                             style={{
-                              flexDirection: 'row',
-                              justifyContent: "flex-start",
-                              gap: 20,
-                              alignItems: 'center',
-                              paddingVertical: 10,
-                              width: '90%',
+                              marginRight: 20,
+                              transform: [
+                                {
+                                  rotate:
+                                    expanded === order.id ? "90deg" : "0deg",
+                                },
+                              ],
                             }}
-                            accessible={true}
-                            accessibilityRole="text"
-                            accessibilityLabel={`${value.name}, quantity ${value.qty}`}
+                          />
+                          <Text
+                            style={{
+                              fontSize: 18,
+                              fontWeight: "600",
+                              color: colors.text,
+                              fontFamily: Fonts.semiBold,
+                            }}
                           >
-                            <View style={styles.badgeContainer}>
-                              <Text
-                                style={styles.badgeText}
-                              >
-                                {value.qty}
-                              </Text>
-                            </View>
-                            <View
-                              style={{
-                                alignItems: 'flex-start',
-                                flexShrink: 1,
-                                flexGrow: 1,
-                                flexWrap: 'wrap',
-                                maxWidth: '60%',
-                              }}
-                            >
-                              <Text
-                                style={{
-                                  paddingLeft: 15,
-                                  fontSize: 16,
-                                  fontFamily: Fonts.medium,
-                                  color: colors.text,
-                                }}
-                              >
-                                {value.name}
-                              </Text>
-                            </View>
-                          </View>
-                        ))}
-                        {!!order.notes && (
-                          <Text style={{ paddingLeft: 20, paddingTop: 4, paddingBottom: 8, fontSize: 14, fontFamily: Fonts.semiBold, color: colors.text }}>
-                            Note: {order.notes}
+                            {new Date(order.createdAt).toLocaleDateString(
+                              undefined,
+                              {
+                                month: "numeric",
+                                day: "numeric",
+                                hour: "numeric",
+                                minute: "2-digit",
+                              },
+                            )}
+                          </Text>
+                        </View>
+
+                        {/* Shows delivered on date when order filled*/}
+                        {isDelivered && (
+                          <Text style={styles.deliveredText}>
+                            Delivered {""}
+                            {new Date(order.createdAt).toLocaleDateString(
+                              undefined,
+                              { month: "short", day: "numeric" },
+                            )}
                           </Text>
                         )}
-                        <View style={{ paddingLeft: 25, paddingRight: 25 }}>
-                          <PrimaryButton
-                            icon="cart.badge.plus"
-                            title="Add To Cart"
-                            onPress={() => router.push({
-                              pathname: "/reviewOrder",
-                              params: { orderToReorder: JSON.stringify(order) }
-                            })}
-                            accessible={true}
-                            accessibilityLabel="Add To Cart"
-                            accessibilityHint="Reorder this past order by adding all items to your cart"
-                          >
-                          </PrimaryButton>
+                      </Pressable>
+
+                      {expanded === order.id && (
+                        <View
+                          style={[
+                            styles.orderDetails,
+                            { backgroundColor: colors.container },
+                          ]}
+                        >
+                          {(
+                            Object.entries(order.items) as [string, OrderItem][]
+                          ).map(([key, value]) => (
+                            <View
+                              key={key}
+                              style={{
+                                flexDirection: "row",
+                                justifyContent: "flex-start",
+                                gap: 20,
+                                alignItems: "center",
+                                paddingVertical: 10,
+                                width: "90%",
+                              }}
+                              accessible={true}
+                              accessibilityRole="text"
+                              accessibilityLabel={`${value.name}, quantity ${value.qty}`}
+                            >
+                              <View style={styles.badgeContainer}>
+                                <Text style={styles.badgeText}>
+                                  {value.qty}
+                                </Text>
+                              </View>
+                              <View
+                                style={{
+                                  alignItems: "flex-start",
+                                  flexShrink: 1,
+                                  flexGrow: 1,
+                                  flexWrap: "wrap",
+                                  maxWidth: "60%",
+                                }}
+                              >
+                                <Text
+                                  style={{
+                                    paddingLeft: 15,
+                                    fontSize: 16,
+                                    fontFamily: Fonts.medium,
+                                    color: colors.text,
+                                  }}
+                                >
+                                  {value.name}
+                                </Text>
+                              </View>
+                            </View>
+                          ))}
+                          {!!order.notes && (
+                            <Text
+                              style={{
+                                paddingLeft: 20,
+                                paddingTop: 4,
+                                paddingBottom: 8,
+                                fontSize: 14,
+                                fontFamily: Fonts.semiBold,
+                                color: colors.text,
+                              }}
+                            >
+                              Note: {order.notes}
+                            </Text>
+                          )}
+                          <View style={{ paddingLeft: 25, paddingRight: 25 }}>
+                            <PrimaryButton
+                              icon="cart.badge.plus"
+                              title="Add To Cart"
+                              onPress={() =>
+                                router.push({
+                                  pathname: "/reviewOrder",
+                                  params: {
+                                    orderToReorder: JSON.stringify(order),
+                                  },
+                                })
+                              }
+                              accessible={true}
+                              accessibilityLabel="Add To Cart"
+                              accessibilityHint="Reorder this past order by adding all items to your cart"
+                            ></PrimaryButton>
+                          </View>
                         </View>
-                      </View>
-                    )}
+                      )}
+                    </View>
                   </View>
                 </View>
-              </View>
               );
             })}
-            <View>
-            </View>
+            <View></View>
           </View>
         </ScrollView>
       )}
@@ -337,8 +391,8 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   placeholderContainer: {
-    width: '90%',
-    backgroundColor: 'transparent',
+    width: "90%",
+    backgroundColor: "transparent",
     padding: 14,
     borderRadius: 8,
     shadowColor: "black",
@@ -364,12 +418,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   sectionContainer: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     borderRadius: 8,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   description: {
     fontSize: 14,
@@ -377,13 +431,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
   },
   orderBox: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     padding: 16,
     flexDirection: "row",
     justifyContent: "space-between",
   },
   orderDetails: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     padding: 14,
   },
   badgeContainer: {
@@ -404,9 +458,9 @@ const styles = StyleSheet.create({
     flex: 0,
     justifyContent: "center",
     alignItems: "center",
-    padding: 20
+    padding: 20,
   },
-    deliveredText: {
+  deliveredText: {
     fontSize: 14,
     color: "#999",
     fontFamily: Fonts.medium,
