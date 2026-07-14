@@ -16,7 +16,8 @@ import { PrimaryButton } from "@/components/ui/primaryButton";
 import { AddToCart } from "@/components/ui/add-to-cart";
 import { Colors, Fonts, Styles } from "@/constants/theme";
 import { useOrder } from "@/context/orderContext";
-import { itemsData, itemLimits, DEFAULT_LIMIT } from "@/constants/products";
+import { itemsData } from "@/constants/products";
+import { applyCountDelta, getItemLimit } from "@/utils/orderLimits";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { useRouter } from "expo-router";
@@ -133,18 +134,13 @@ export default function PlaceOrderScreen() {
   // Update the item count when the +/- button is clicked
   const handleCountChange = useCallback(
     (item: string, delta: number) => {
-      const limit = itemLimits[item] || DEFAULT_LIMIT;
-      const currentCount = order[item] || 0;
-      const newCount = currentCount + delta;
-
-      if (newCount <= 0) {
+      const result = applyCountDelta(item, order[item] || 0, delta);
+      if (result.action === "remove") {
         setFlippedItems((flipPrev) => ({ ...flipPrev, [item]: false }));
         updateOrdercount(item, 0);
-        return;
+      } else if (result.action === "update") {
+        updateOrdercount(item, result.newCount);
       }
-
-      if (newCount > limit) return;
-      updateOrdercount(item, newCount);
     },
     [order, updateOrdercount],
   );
@@ -159,7 +155,7 @@ export default function PlaceOrderScreen() {
     (item: string, size: "small" | "medium" | "large" = "medium") => {
       const isFlipped = flippedItems[item];
       const count = order[item] || 0;
-      const limit = itemLimits[item] || DEFAULT_LIMIT;
+      const limit = getItemLimit(item);
 
       return (
         <AddToCart
