@@ -17,7 +17,6 @@ import { Title } from "@/components/ui/title";
 import { Image } from "expo-image";
 import { useFocusEffect } from 'expo-router';
 import { IconSymbol } from "@/components/ui/icon-symbol";
-import { loadOrders } from "@/app/utils/orderStorage";
 import React from 'react';
 
 /* This is the order confirmation page, which displays after an order is placed. 
@@ -32,18 +31,19 @@ export default function OrderConfirmationScreen() {
   const { order, clearOrder } = useOrder();
   const [orders, setOrders] = useState<any[]>([]);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      async function fetchOrders() {
-        const loadedOrders = await loadOrders();
-        setOrders(loadedOrders);
-      }
-      fetchOrders();
-      return () => {
-        clearOrder();
-      };
-    }, [clearOrder])
-  );
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     async function fetchOrders() {
+  //       const loadedOrders = await loadOrders();
+  //       setOrders(loadedOrders);
+  //     }
+  //     fetchOrders();
+  //     return () => {
+  //       clearOrder();
+  //     };
+  //   }, [clearOrder])
+  // );
+
 
   //flips the boxes between expanded state and unexpanded state, but maintains
   //the state of the box that was not pressed

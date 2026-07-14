@@ -53,12 +53,31 @@ import {
   getDocs,
   orderBy,
   query,
+  where,
   updateDoc,
 } from "firebase/firestore";
 import { getCurrentUser, getCurrentUserWithToken } from "./accountStorage";
 import { db } from "./firebaseConfig";
 
 const ORDERS_COLLECTION = "orders";
+
+export async function loadOrdersByUser(userId: string) {
+  try {
+    const q = query(
+      collection(db, ORDERS_COLLECTION),
+      where("userId", "==", userId),
+      orderBy("createdAt", "desc"),
+    );
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+  } catch (e) {
+    console.error("Load orders error:", e);
+    return [];
+  }
+}
 
 export async function loadOrders() {
   try {
