@@ -2,7 +2,7 @@
 
 This app was developed for the Office of Health Promotion Junk Mail program at Carleton College. This app is designed specifically for Carleton college students and the Student Wellness Advocates who run the program and fill orders. It was developed to replace the current Google Form ordering system for menstrual/safe-sex supplies. The app allows all Carleton students to create an account with their school email and then log in to order these supplies.
 
-See HOW TO CONTRIBUTE for information on how to contribute to this project.
+See [CONTRIBUTE](CONTRIBUTE.md) for information on how to contribute to this project.
 
 ## Tech Stack
 
